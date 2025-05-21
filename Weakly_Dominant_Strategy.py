@@ -1,4 +1,4 @@
-# Let us try to find all strongly dominant strategies in a strategic form game.
+# Let us try to find all weakly dominant strategies in a strategic form game.
 
 # We need to first input the number for players
 
@@ -63,6 +63,7 @@ for player in range(n_players):
     for strategy in strategy_set:
 
         possible = True
+        must_possible = False
 
         for strategy_comp in strategy_set:
             if strategy == strategy_comp:
@@ -82,12 +83,15 @@ for player in range(n_players):
                 utility_1 = int(utility_1_str.split()[player])
                 utility_2 = int(utility_2_str.split()[player])
 
-                if utility_1 <= utility_2:
+                if utility_1 > utility_2:
+                    must_possible = True
+
+                if utility_1 < utility_2:
                     possible = False
                     break
-        if not possible:
+        if not possible or not must_possible:
             break
         else:
             dominant_strategies.append(strategy)
 
-    print(f"Dominant strategies for player-{player_}: {dominant_strategies}")
+    print(f"Weakly Dominant strategies for player-{player_}: {dominant_strategies}")
