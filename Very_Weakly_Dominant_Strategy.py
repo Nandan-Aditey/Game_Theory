@@ -43,9 +43,11 @@ for strat_comb in all_strat_comb:
     utility = input(f"Please enter the payoff for each player, seperated by space (in order) when strategies are {strat_comb_join}: ")
     Utilities[strat_comb] = utility
 
+print("\n--------------------------------------\n")
 
 for player in range(n_players):
 
+    all_strategies = []
     player_ = player + 1
     max_payoff = 0
     strategy_set = Strategies[player] # Get all possible stratigies of player
@@ -86,15 +88,27 @@ for player in range(n_players):
                     possible = False
                     break
         if possible:
-            Strategy_equilibria.append(strategy)
-            break
+            all_strategies.append(strategy)
 
-    if len(Strategy_equilibria) < (player+1):
-        Strategy_equilibria.append("Does not exist")
+    Strategy_equilibria.append(all_strategies)
 
     print(f"Very Weakly Dominant strategies for player-{player_}: {Strategy_equilibria[player]}")
 
 
 
-if "Does not exist" not in Strategy_equilibria:
-    print("Very Weakly Dominant Strategy Equilibrium: ", Strategy_equilibria)
+def equilibria_product(Strategies):
+    if not Strategies:
+        return [()]
+    rest_product = equilibria_product(Strategies[1:])
+    result = []
+    for strat in Strategies[0]:
+        for prod in rest_product:
+            result.append((strat,) + prod)
+    return result
+
+
+if [] not in Strategy_equilibria:
+    print("\n\nVery Weakly Dominant Strategy Equilibriums:")
+    all_equilibria = equilibria_product(Strategy_equilibria)
+    for i, strategies in enumerate(all_equilibria, 1):
+        print(f"Equilibrium-{i}: {strategies}")
