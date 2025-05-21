@@ -1,4 +1,4 @@
-# Let us try to find all weakly dominant strategies in a strategic form game.
+# Let us try to find all Weakly Dominant strategies in a strategic form game.
 
 # We need to first input the number for players
 
@@ -7,6 +7,7 @@ n_players = int(input("Enter the number of players: "))
 # For each player, we need to know their possible strategies. We create a list for that.
 
 Strategies = [] # List at index i represents the possible strategies for player i+1
+Strategy_equilibria = []
 
 for player in range(n_players):
 
@@ -44,26 +45,25 @@ for strat_comb in all_strat_comb:
 
 
 for player in range(n_players):
+
     player_ = player + 1
     max_payoff = 0
-    dominant_strategies = []
-    strategy_set = Strategies[player-1] # Get all possible stratigies of player
+    strategy_set = Strategies[player] # Get all possible stratigies of player
 
     # Now we need to look at all strategy combinations without that player
 
-    sub_Strategies = Strategies.copy()
-    del sub_Strategies[player-1]
+    sub_Strategies = Strategies[:player] + Strategies[player+1:]
     
     # Now we need to look at all combinations
 
     comb_sub = strat_product(sub_Strategies)
 
-    # To see if a strategy is dominant:
+    # To see if a strategy is Weakly Dominant:
 
     for strategy in strategy_set:
 
         possible = True
-        must_possible = False
+        strictly_better_found = False
 
         for strategy_comp in strategy_set:
             if strategy == strategy_comp:
@@ -84,14 +84,21 @@ for player in range(n_players):
                 utility_2 = int(utility_2_str.split()[player])
 
                 if utility_1 > utility_2:
-                    must_possible = True
+                    strictly_better_found = True
 
                 if utility_1 < utility_2:
                     possible = False
                     break
-        if not possible or not must_possible:
+        if possible and strictly_better_found:
+            Strategy_equilibria.append(strategy)
             break
-        else:
-            dominant_strategies.append(strategy)
 
-    print(f"Weakly Dominant strategies for player-{player_}: {dominant_strategies}")
+    if len(Strategy_equilibria) < (player+1):
+        Strategy_equilibria.append("Does not exist")
+
+    print(f"Weakly Dominant strategies for player-{player_}: {Strategy_equilibria[player]}")
+
+
+
+if "Does not exist" not in Strategy_equilibria:
+    print("Weakly Dominant Strategy Equilibrium: ", Strategy_equilibria)
