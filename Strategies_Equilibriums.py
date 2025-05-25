@@ -68,6 +68,8 @@ for player in range(n_players):
 
     Utility_Comb[player] = player_dict
 
+print("\n\n")
+
 # To find Dominant Strategies for each player, we will look at the strategies of each player and compare with all other strategies
 
 for player in range(n_players):
@@ -161,21 +163,9 @@ for player in range(n_players):
                 min_utility_comb.append(tuple(profile))
             elif utility == min_utility:
                 min_utility_comb.append(tuple(profile))
-
-            if utility > max_utility:
-                max_utility = utility
-                max_utility_comb = []
-                max_utility_comb.append(tuple(profile))
-            elif utility == max_utility:
-                max_utility_comb.append(tuple(profile))
         
         min_utilities_player.append(min_utility)
         min_utilities_combs_player.append(min_utility_comb)
-
-        max_utilities_player.append(max_utility)
-        max_utilities_combs_player.append(max_utility_comb)
-
-
 
         if strongly_dominant:
             Strongly_DS_Equilibria.append(strategy)
@@ -187,6 +177,30 @@ for player in range(n_players):
         elif very_weakly_dominant:
             player_very_weakly_dominant_set.append(strategy)
 
+
+    for combination_set in sub_Strategies_Combinations:
+        
+        max_utility = float('-inf')
+
+        max_utility_strat = []
+
+        for strategy in strategy_set:
+
+            profile = list(combination_set)
+            profile.insert(player, strategy)
+            utility = Utilities[tuple(profile)]
+            utility = int(utility[player])
+
+            if utility > max_utility:
+                max_utility = utility
+                max_utility_strat = [strategy]  # Reset with current best
+            elif utility == max_utility:
+                max_utility_strat.append(strategy)  # Add another best
+            
+        max_utilities_player.append(max_utility)
+        max_utilities_combs_player.append(max_utility_strat)
+
+    
 
     if player_weakly_dominant_set == []:
         Weakly_DS_Equilibria.append("Does not exist")
@@ -207,16 +221,16 @@ for player in range(n_players):
             strat_maxMin = min_utilities_combs_player[index][0][player]
             maxMin_strats_player.append(strat_maxMin)
     
-    maxMin_strats.append(maxMin_strats_player)
+    maxMin_strats.append(maxMin_strats_player[0])
     maxMin_utility.append(maxMin_utility_player)
 
 
     for index, val in enumerate(max_utilities_player):
         if val == minMax_utility_player:
-            strat_minMax = max_utilities_combs_player[index][0][player]
+            strat_minMax = max_utilities_combs_player[index][0]
             minMax_strats_player.append(strat_minMax)
 
-    minMax_strats.append(minMax_strats_player)
+    minMax_strats.append(minMax_strats_player[0])
     minMax_utility.append(minMax_utility_player)
 
 
@@ -226,7 +240,9 @@ for player in range(n_players):
     print(f"Strongly Dominant strategies for player-{player_num}: {Strongly_DS_Equilibria[player]}")
     print(f"Weakly Dominant strategies for player-{player_num}: {Weakly_DS_Equilibria[player]}")
     print(f"Very Weakly Dominant strategies for player-{player_num}: {VeryWeakly_DS_Equilibria[player]}")
+    print()
 
+all_equilibria = [ ]
 
 if "Does not exist" not in Strongly_DS_Equilibria:
     print("\nStrongly Dominant Strategy Equilibrium: ", Strongly_DS_Equilibria)
@@ -273,7 +289,7 @@ for outcome in all_strat_comb:
             if strat_player == curr_strat:
                 continue
             outcome_test = outcome[:player] + (strat_player,) + outcome[player+1:]
-            utility_strat_player = Utilities_List[player]
+            utility_strat_player = Utilities[outcome_test][player]
             if utility < utility_strat_player:
                 can_Deviate = False
                 break

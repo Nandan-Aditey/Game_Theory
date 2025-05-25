@@ -90,4 +90,3 @@ for player in range(n_players):
     print(f"\nMaxMin utility for player-{player_}: {maxMin_utility}")
     print(f"MaxMin strategies for player-{player_}: ", ", ".join(maxMin_strats))
     print()
-

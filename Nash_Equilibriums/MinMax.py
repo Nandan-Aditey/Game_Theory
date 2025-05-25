@@ -57,13 +57,13 @@ for player in range(n_players):
     max_utilities = []
     max_utilities_combs = []
 
-    for strat in player_strategies:
+    for comb in comb_sub:
         
         max_utility = float('-inf')
 
-        max_utility_comb = []
+        max_utility_strat = []
 
-        for comb in comb_sub:
+        for strat in player_strategies:
 
             profile = list(comb)
             profile.insert(player, strat)
@@ -73,23 +73,21 @@ for player in range(n_players):
             if utility > max_utility:
                 max_utility = utility
                 max_utilities_combs = []
-                max_utilities_combs.append(tuple(profile))
+                max_utilities_combs.append(strat)
             elif utility == max_utility:
-                max_utilities_combs.append(tuple(profile))
+                max_utilities_combs.append(strat)
         
         max_utilities.append(max_utility)
-        max_utilities_combs.append(max_utility_comb)
+        max_utilities_combs.append(max_utility_strat)
     
     minMax_utility = min(max_utilities)
 
     for index, val in enumerate(max_utilities):
         if val == minMax_utility:
             print("max_utilities_combs[index]: ", max_utilities_combs[index])
-            print("max_utilities_combs[index][0][player]: ", max_utilities_combs[index][player] )
-            strat_minMax = max_utilities_combs[index][player]
+            strat_minMax = max_utilities_combs[index]
             minMax_strats.extend(strat_minMax)
 
     print(f"\nMinMax utility for player-{player_}: {minMax_utility}")
     print(f"MinMax strategies for player-{player_}: ", ", ".join(minMax_strats))
     print()
-
