@@ -11,7 +11,7 @@ This project provides interactive Python scripts to analyze **strategic form gam
 
 ## Features
 
-- Input-based setup of strategic form games.
+- Input based setup of strategic form games.
 - Support for any number of players and their strategies.
 - Accepts complete payoff profiles for each strategy combination.
 - Computes:
@@ -20,7 +20,7 @@ This project provides interactive Python scripts to analyze **strategic form gam
   - Very Weakly Dominant Strategies
   - Pure Strategy Nash Equilibria (PSNE)
   - MaxMin and MinMax strategies for each player
-- Finds all possible dominant strategy equilibria (as Cartesian products).
+- Finds all possible dominant strategy equilibria.
 
 ## Definitions
 

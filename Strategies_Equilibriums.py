@@ -1,3 +1,19 @@
+'''
+Created: 23 May 2025
+
+This python file provides core functionality for analyzing finite strategic form games. 
+It supports multiple players and strategies, and computes key game-theoretic solutions, including:
+- Strongly, weakly, and very weakly dominant strategies
+- Dominant strategy equilibria
+- Pure Strategy Nash Equilibria (PSNE)
+- MaxMin and MinMax strategies
+
+Usage:
+Define the players, their strategies, and the full payoff matrix. 
+The code will then analyze the game structure and output relevant equilibria and strategy profiles.
+'''
+
+
 n_players = int(input("Enter the number of players: "))
 
 
@@ -29,7 +45,12 @@ for player in range(n_players):
 # Each element is a tuple in the list returned by strat_product()
 
 def strat_product(Strategies):
-    
+    '''
+    Computes the Cartesian product of a list of strategy sets.
+    >>> strat_product([['A', 'B'], ['X', 'Y']])
+    [('A', 'X'), ('A', 'Y'), ('B', 'X'), ('B', 'Y')]
+    '''
+
     if Strategies == []:
         return [()]
 
@@ -38,7 +59,7 @@ def strat_product(Strategies):
     for strat in Strategies[0]:
         for prod in rest_product:
             result.append((strat,) + prod)
-    
+
     return result
 
 all_strat_comb = strat_product(Strategies)
