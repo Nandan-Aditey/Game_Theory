@@ -65,7 +65,7 @@ for outcome in all_strat_comb:
             if strat_player == curr_strat:
                 continue
             outcome_test = outcome[:player] + (strat_player,) + outcome[player+1:]
-            utility_strat_player = Utilities_List = [int(_) for _ in Utilities[outcome_test].split()][player]
+            utility_strat_player = [int(_) for _ in Utilities[outcome_test].split()][player]
             if utility < utility_strat_player:
                 can_Deviate = False
                 break
