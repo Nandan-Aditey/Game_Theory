@@ -218,6 +218,8 @@ for player in range(n_players):
         max_utility = float('-inf')
 
         for combination_set in sub_Strategies_Combinations:
+
+            # Try to find the maximum utility
             
             profile = list(combination_set)
             profile.insert(player, strategy)
