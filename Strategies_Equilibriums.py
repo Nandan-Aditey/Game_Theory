@@ -18,11 +18,13 @@ n_players = int(input("Enter the number of players: "))
 
 
 Strategies = [] # List at index i represents the possible strategies for player i+1
+
+# The below lists are to hold the various values to return to the user 
+# List to store the equilibriums, there is at max one for Strongly Dominant Equilibriums, so its a list of strategies, while the other two are list of lists
 Strongly_DS_Equilibria = []
-Weakly_DS_Equilibria_set = []
 Weakly_DS_Equilibria = []
 VeryWeakly_DS_Equilibria = []
-VeryWeakly_DS_Equilibria_set = []
+
 PSNE_list = []
 maxMin_strats = []
 minMax_strats = []
@@ -35,6 +37,7 @@ for player in range(n_players):
     player_num = player + 1
     strat_set_player = input(f"Please give the strategies of player-{player_num} seperated by space: ")
 
+    # Convert the input into a list
     strategy_Player = strat_set_player.split()
     Strategies.append(strategy_Player)     # Strategies is a list of lists, where each list contains the strategies of the players 
 
@@ -89,21 +92,25 @@ for player in range(n_players):
 
     Utility_Comb[player] = player_dict
 
+# The above loop is simply to reduce the number of computations, it will not reduce the Asymptotic time complexity
+
 print("\n\n")
 
 # To find Dominant Strategies for each player, we will look at the strategies of each player and compare with all other strategies
+# We have three conditions to filter the strategies into strongly, weakly and very weakly (or none).
 
 for player in range(n_players):
 
+    # Since there can be multiple weakly, and very weakly dominant strategies, we keep a list
     player_weakly_dominant_set = []
     player_very_weakly_dominant_set = []
 
-    # MaxMin strategies
+    # MaxMin strategies: Storing the data of each player
     maxMin_strats_player = []
     min_utilities_player = []
     min_utilities_combs_player = []
 
-    # MinMax strategies
+    # MinMax strategies: Storing the data of each player
     minMax_strats_player = []
     max_utilities_player = []
     max_utilities_combs_player = []
@@ -171,8 +178,11 @@ for player in range(n_players):
 
                 # For weakly dominant, we will check very_weakly_dominant and below check
             
-        
+        # Now we look at MaxMin strategies of the player
+
         for combination_set in sub_Strategies_Combinations:
+
+            # Take each possible combination and see which one will lead to the least possible utility and what is it
 
             profile = list(combination_set)
             profile.insert(player, strategy)
@@ -185,8 +195,12 @@ for player in range(n_players):
             elif utility == min_utility:
                 min_utility_comb.append(tuple(profile))
         
+        # Create a list storing the smallest utility possible corresponding to each strategy and the combination leading to it
+
         min_utilities_player.append(min_utility)
         min_utilities_combs_player.append(min_utility_comb)
+
+        # The below if-elif helps figure out whether a strategy is dominant and of which type
 
         if strongly_dominant:
             Strongly_DS_Equilibria.append(strategy)
@@ -199,14 +213,12 @@ for player in range(n_players):
             player_very_weakly_dominant_set.append(strategy)
 
 
-    for combination_set in sub_Strategies_Combinations:
-        
+        # Now we look at the MinMax strategies
+
         max_utility = float('-inf')
 
-        max_utility_strat = []
-
-        for strategy in strategy_set:
-
+        for combination_set in sub_Strategies_Combinations:
+            
             profile = list(combination_set)
             profile.insert(player, strategy)
             utility = Utilities[tuple(profile)]
@@ -217,9 +229,9 @@ for player in range(n_players):
                 max_utility_strat = [strategy]  # Reset with current best
             elif utility == max_utility:
                 max_utility_strat.append(strategy)  # Add another best
-            
+                
         max_utilities_player.append(max_utility)
-        max_utilities_combs_player.append(max_utility_strat)
+        max_utilities_combs_player.append(max_utility_strat)    # Save all strategies giving same max
 
     
 
