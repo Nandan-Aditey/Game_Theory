@@ -342,8 +342,6 @@ for index, psne in enumerate(PSNE_list, 1):
     print(f"Equilibrium-{index}: {psne}")
 
 
-
-
 print("\n\nMaxMin Strategies:")
 for i in range(n_players):
     print(f"Player-{i+1}: {maxMin_strats[i]} with MaxMin utility = {maxMin_utility[i]}")

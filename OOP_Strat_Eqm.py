@@ -1,3 +1,4 @@
+# Class representing a player in the game
 class Player:
 
     def __init__(self, id, strategies):
@@ -5,21 +6,29 @@ class Player:
         self.strategies = strategies
 
 
+# Class representing the game
 class Game:
     def __init__(self, Players):
-        self.players = Players
-        self.utilities = {}
-        self.utility_players = {}
-        self.strategy_profiles = [player.strategies for player in Players]
-        self.Strongly_DS_Equilibria = []
-        self.Weakly_DS_Equilibria = []
-        self.VeryWeakly_DS_Equilibria = []
-        self.PSNE_list = []
-        self.MinMax_Strategies = []
-        self.MaxMin_Strategies = []
+        self.players = Players  # List of Player objects
+        self.utilities = {} # Stores utilities for each strategy profile
+        self.utility_players = {}   # Stores utilities from each player's perspective
+        self.strategy_profiles = [player.strategies for player in Players]  # All players' strategy sets
+        self.Strongly_DS_Equilibria = []    # Strongly dominant strategies
+        self.Weakly_DS_Equilibria = []  # Weakly dominant strategies
+        self.VeryWeakly_DS_Equilibria = []  # Very weakly dominant strategies
+        self.PSNE_list = [] # Pure Strategy Nash Equilibria
+        self.MinMax_Strategies = [] # MinMax strategies
+        self.MaxMin_Strategies = [] # MaxMin strategies
 
 
+    # Generate Cartesian product of all strategies
     def strategy_product(self, strategy_profiles):
+        """
+        Generate the Cartesian product of strategy sets for all players.
+
+        Args: strategy_profiles (list): List of strategy lists for each player.
+        Returns: list: List of tuples representing all possible strategy profiles.
+        """
         
         Strategy_set = list(strategy_profiles)
 
@@ -35,14 +44,29 @@ class Game:
         return result
     
 
+    # Take input of payoffs for all strategy profiles
     def utility_finder(self, all_strat_profiles):
+        """
+        Collect utility values from user input for all possible strategy profiles.
+
+        Args: all_strat_profiles (list): List of all possible strategy profiles.
+        """
+        
         for profile in all_strat_profiles:
             strat_profile_join = ', '.join(profile)
             utility = input(f"Please enter the payoff for each player, seperated by space (in order) when strategies are {strat_profile_join}: ")
             self.utilities[profile] = list(map(int, utility.split()))
 
 
+    # Build utility view for each individual player
     def Utility_player_creator(self, n_players, all_strat_profiles):
+        """
+        Construct utility mappings for each player from all strategy profiles.
+
+        Args: n_players (int): Number of players in the game.
+              all_strat_profiles (list): List of all possible strategy profiles.
+        """
+
         for player in range(n_players):
 
             player_dict = {}
@@ -53,7 +77,14 @@ class Game:
             self.utility_players[player] = player_dict
 
 
+    # Find strongly dominant strategies for each player
     def Strongly_Dominant(self, n_players):
+        """
+        Determine strongly dominant strategies for each player.
+
+        Args: n_players (int): Number of players.
+        Returns: list: Strongly dominant strategy for each player or 'Does not exist'.
+        """
 
         for player in range(n_players):
 
@@ -98,7 +129,15 @@ class Game:
         return self.Strongly_DS_Equilibria
     
 
+    # Find weakly dominant strategies for each player
     def Weakly_Dominant(self, n_players):
+        """
+        Determine weakly dominant strategies for each player.
+
+        Args: n_players (int): Number of players.
+
+        Returns: list: List of weakly dominant strategies for each player.
+        """
 
         for player in range(n_players):
 
@@ -147,7 +186,14 @@ class Game:
         return self.Weakly_DS_Equilibria
     
 
+    # Find very weakly dominant strategies for each player
     def VWeakly_Dominant(self, n_players):
+        """
+        Determine very weakly dominant strategies for each player.
+
+        Args: n_players (int): Number of players.
+        Returns: list: List of very weakly dominant strategies for each player.
+        """
 
         for player in range(n_players):
 
@@ -192,7 +238,15 @@ class Game:
         return self.VeryWeakly_DS_Equilibria
     
 
+    # Find Pure Strategy Nash Equilibria
     def PSNE(self, n_players, all_strat_profiles):
+        """
+        Compute all Pure Strategy Nash Equilibria (PSNE) for the game.
+
+        Args: n_players (int): Number of players.
+              all_strat_profiles (list): All possible strategy profiles.
+        Returns: list: List of strategy profiles that are Nash equilibria.
+        """
 
         for profile in all_strat_profiles:
 
@@ -226,7 +280,14 @@ class Game:
         return(self.PSNE_list)
     
 
+    # Compute MinMax strategies for each player
     def MinMax(self, n_players):
+        """
+        Compute MinMax strategies for each player (maximizing their minimum payoff).
+
+        Args: n_players (int): Number of players.
+        Returns: tuple: (max_min_utility, list of MinMax strategies per player)
+        """
 
         for player in range(n_players):
             player_strategies = self.strategy_profiles[player]
@@ -260,7 +321,15 @@ class Game:
 
     
 
+    # Compute MaxMin strategies for each player
     def MaxMin(self, n_players):
+        """
+        Compute MaxMin strategies for each player (selecting strategies with the best worst-case utility).
+
+        Args: n_players (int): Number of players.
+
+        Returns: tuple: (max_min_utility, list of MaxMin strategies per player)
+        """
 
         for player in range(n_players):
 
@@ -305,6 +374,8 @@ class Game:
 
 
 
+# Execution
+
 n_players = int(input("Enter the number of players: "))
 
 Players_list = []
@@ -321,6 +392,7 @@ for player in range(n_players):
     Players_list.append(Player(player_num, strategy_Player))
 
 
+# Create Game instance and compute outcomes
 game1 = Game(Players_list)
 all_strat_profiles = game1.strategy_product(game1.strategy_profiles)
 game1.utility_finder(all_strat_profiles)
