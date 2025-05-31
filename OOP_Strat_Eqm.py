@@ -15,6 +15,7 @@ class Game:
         self.Weakly_DS_Equilibria = []
         self.VeryWeakly_DS_Equilibria = []
         self.PSNE_list = []
+        self.MinMax_Strategies = []
 
 
     def strategy_product(self, strategy_profiles):
@@ -222,8 +223,50 @@ class Game:
                 self.PSNE_list.append(profile)
 
         return(self.PSNE_list)
+    
+    def MinMax(self, n_players):
 
+        for player in range(n_players):
 
+            player_strategies = self.strategy_profiles[player]
+            minMax_strats = []
+
+            sub_Strategies = self.strategy_profiles[:player] + self.strategy_profiles[player+1:]
+            sub_profile_set = self.strategy_product(sub_Strategies)
+
+            max_utilities = []
+            max_utilities_combs = []
+
+            for sub_profile in sub_profile_set:
+                
+                max_utility = float('-inf')
+                max_utility_strat = []
+
+                for strat in player_strategies:
+                    profile = list(sub_profile)
+                    profile.insert(player, strat)
+
+                    utility = self.utility_players[player][tuple(profile)]
+
+                    if utility > max_utility:
+                        max_utility = utility
+                        max_utilities_combs = []
+                        max_utilities_combs.append(strat)
+                    elif utility == max_utility:
+                        max_utilities_combs.append(strat)
+                
+                max_utilities.append(max_utility)
+                max_utilities_combs.append(max_utility_strat)
+            
+            minMax_utility = min(max_utilities)
+            for index, val in enumerate(max_utilities):
+                if val == minMax_utility:
+                    strat_minMax = max_utilities_combs[index]
+                    minMax_strats.append(strat_minMax)
+
+            self.MinMax_Strategies.append(minMax_strats)
+
+        return minMax_utility, self.MinMax_Strategies
 
 
 n_players = int(input("Enter the number of players: "))
@@ -250,6 +293,7 @@ strongly_dominant = game1.Strongly_Dominant(n_players)
 weakly_dominant = game1.Weakly_Dominant(n_players)
 vweakly_dominant = game1.VWeakly_Dominant(n_players)
 PSNE_list = game1.PSNE(n_players, all_strat_profiles)
+minMax_utility, minMax_strats = game1.MinMax(n_players)
 
 
 print("--------------------------------------------------------------------------")
@@ -267,6 +311,7 @@ if "Does not exist" not in strongly_dominant:
 
 
 print()
+print()
 
 
 for player, strategy in enumerate(weakly_dominant):
@@ -282,6 +327,7 @@ if [] not in weakly_dominant:
         print(f"Equilibrium-{index}: {list(strategies)}")
 
 
+print()
 print()
 
 
@@ -299,6 +345,12 @@ if [] not in vweakly_dominant:
 
 
 print("\n\nAll Pure Strategy Nash Equilibriums: ")
-
 for index, psne in enumerate(PSNE_list, 1):
     print(f"Equilibrium-{index}: {psne}")
+
+
+print()
+print()
+
+for player in range(1, n_players+1):
+    print(f"MinMax utility of player-{player} is {minMax_utility} with strategies: {minMax_strats[player-1]}")
