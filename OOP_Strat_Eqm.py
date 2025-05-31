@@ -229,46 +229,35 @@ class Game:
     def MinMax(self, n_players):
 
         for player in range(n_players):
-
             player_strategies = self.strategy_profiles[player]
-            minMax_strats = []
+            min_utilities = []
+            min_utilities_strats = []
 
-            sub_Strategies = self.strategy_profiles[:player] + self.strategy_profiles[player+1:]
-            sub_profile_set = self.strategy_product(sub_Strategies)
+            for strat in player_strategies:
+                utilities_for_strat = []
 
-            max_utilities = []
-            max_utilities_strats = []
+                # Form all profiles for opponents
+                sub_Strategies = self.strategy_profiles[:player] + self.strategy_profiles[player+1:]
+                sub_profile_set = self.strategy_product(sub_Strategies)
 
-            for sub_profile in sub_profile_set:
-                
-                max_utility = float('-inf')
-                max_utility_strat = []
-
-                for strat in player_strategies:
+                for sub_profile in sub_profile_set:
                     profile = list(sub_profile)
                     profile.insert(player, strat)
-
                     utility = self.utility_players[player][tuple(profile)]
+                    utilities_for_strat.append(utility)
 
-                    if utility > max_utility:
-                        max_utility = utility
-                        max_utility_strat = []
-                        max_utility_strat.append(strat)
-                    elif utility == max_utility:
-                        max_utility_strat.append(strat)
-                
-                max_utilities.append(max_utility)
-                max_utilities_strats.append(max_utility_strat)
-            
-            minMax_utility = min(max_utilities)
-            for index, val in enumerate(max_utilities):
-                if val == minMax_utility:
-                    strat_minMax = max_utilities_strats[index]
-                    minMax_strats.extend(strat_minMax)
+                min_utility = min(utilities_for_strat)
+                min_utilities.append(min_utility)
+                min_utilities_strats.append(strat)
 
-            self.MinMax_Strategies.append(minMax_strats)
+            max_min_utility = max(min_utilities)
 
-        return minMax_utility, self.MinMax_Strategies
+            # collect all strategies with that max_min_utility
+            best_strats = [strategy for index, strategy in enumerate(min_utilities_strats) if min_utilities[index] == max_min_utility]
+            self.MinMax_Strategies.append(best_strats)
+
+        return max_min_utility, self.MinMax_Strategies
+
     
 
     def MaxMin(self, n_players):
