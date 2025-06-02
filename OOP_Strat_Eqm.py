@@ -54,7 +54,7 @@ class Game:
         
         for profile in all_strat_profiles:
             strat_profile_join = ', '.join(profile)
-            utility = input(f"Please enter the payoff for each player, seperated by space (in order) when strategies are {strat_profile_join}: ")
+            utility = input(f"Please enter the payoff for each player, separated by space (in order) when strategies are {strat_profile_join}: ")
             self.utilities[profile] = list(map(int, utility.split()))
 
 
@@ -280,44 +280,59 @@ class Game:
         return(self.PSNE_list)
     
 
-    # Compute MinMax strategies for each player
     def MinMax(self, n_players):
         """
-        Compute MinMax strategies for each player (maximizing their minimum payoff).
+        Compute MinMax strategies for each player (minimizing the maximum utility the player might face).
 
         Args: n_players (int): Number of players.
-        Returns: tuple: (max_min_utility, list of MinMax strategies per player)
+
+        Returns: tuple: (list of minMax_utility per player, list of MinMax strategies per player)
         """
+        minMax_utilities = []
 
         for player in range(n_players):
             player_strategies = self.strategy_profiles[player]
-            min_utilities = []
-            min_utilities_strats = []
+            sub_Strategies = self.strategy_profiles[:player] + self.strategy_profiles[player + 1:]
+            sub_profile_set = self.strategy_product(sub_Strategies)
 
-            for strat in player_strategies:
-                utilities_for_strat = []
+            max_utilities = []
+            strategy_lists = []
 
-                # Form all profiles for opponents
-                sub_Strategies = self.strategy_profiles[:player] + self.strategy_profiles[player+1:]
-                sub_profile_set = self.strategy_product(sub_Strategies)
+            for sub_profile in sub_profile_set:
+                max_utility = float('-inf')
+                best_strats = []
 
-                for sub_profile in sub_profile_set:
+                for strat in player_strategies:
                     profile = list(sub_profile)
                     profile.insert(player, strat)
                     utility = self.utility_players[player][tuple(profile)]
-                    utilities_for_strat.append(utility)
 
-                min_utility = min(utilities_for_strat)
-                min_utilities.append(min_utility)
-                min_utilities_strats.append(strat)
+                    if utility > max_utility:
+                        max_utility = utility
+                        best_strats = [strat]
+                    elif utility == max_utility:
+                        best_strats.append(strat)
 
-            max_min_utility = max(min_utilities)
+                max_utilities.append(max_utility)
+                strategy_lists.append(best_strats)
 
-            # collect all strategies with that max_min_utility
-            best_strats = [strategy for index, strategy in enumerate(min_utilities_strats) if min_utilities[index] == max_min_utility]
-            self.MinMax_Strategies.append(best_strats)
+            # Find the Min of the Max utilities for this player
+            minMax_utility = min(max_utilities)
+            minMax_utilities.append(minMax_utility)
 
-        return max_min_utility, self.MinMax_Strategies
+            # Get all strategies corresponding to this minMax_utility
+            best_minmax_strats = []
+            for i, val in enumerate(max_utilities):
+                if val == minMax_utility:
+                    best_minmax_strats.extend(strategy_lists[i])
+
+            # Remove duplicates
+            best_minmax_strats = list(set(best_minmax_strats))
+
+            self.MinMax_Strategies.append(best_minmax_strats)
+
+        return minMax_utilities, self.MinMax_Strategies
+
 
     
 
@@ -330,6 +345,8 @@ class Game:
 
         Returns: tuple: (max_min_utility, list of MaxMin strategies per player)
         """
+
+        maxMin_utilities = []
 
         for player in range(n_players):
 
@@ -363,6 +380,7 @@ class Game:
                 min_utilities_strats.append(min_utility_profile)
 
             maxMin_utility = max(min_utilities)
+            maxMin_utilities.append(maxMin_utility)
             for index, val in enumerate(min_utilities):
                 if val == maxMin_utility:
                     strat_maxMin = min_utilities_strats[index]
@@ -370,7 +388,7 @@ class Game:
 
             self.MaxMin_Strategies.append(maxMin_strats)
 
-        return maxMin_utility, self.MaxMin_Strategies
+        return maxMin_utilities, self.MaxMin_Strategies
 
 
 
@@ -384,7 +402,7 @@ for player in range(n_players):
 
     # Obtain a list of strategies for each player
     player_num = player + 1
-    strat_set_player = input(f"Please give the strategies of player-{player_num} seperated by space: ")
+    strat_set_player = input(f"Please give the strategies of player-{player_num} separated by space: ")
 
     # Convert the input into a list
     strategy_Player = strat_set_player.split()
@@ -461,10 +479,10 @@ print()
 print()
 
 for player in range(1, n_players+1):
-    print(f"MinMax utility of player-{player} is {minMax_utility} with strategies: {list(set(minMax_strats[player-1]))}")
+    print(f"MinMax utility of player-{player} is {minMax_utility[player-1]} with strategies: {list(set(minMax_strats[player-1]))}")
 
 print()
 print()
 
 for player in range(1, n_players+1):
-    print(f"MaxMin utility of player-{player} is {maxMin_utility} with strategies: {list(set(maxMin_strats[player-1]))}")
+    print(f"MaxMin utility of player-{player} is {maxMin_utility[player-1]} with strategies: {list(set(maxMin_strats[player-1]))}")
